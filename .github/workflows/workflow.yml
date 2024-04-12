@@ -1,9 +1,9 @@
-name: Build and Deploy to S3
+name: PROD ACTIONS
 
 on:
   push:
     branches:
-      - main # Change this to your project's main branch
+      - prod
 
 jobs:
   build_and_deploy:
@@ -16,22 +16,22 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '14' # Use Node.js version 14
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit # Use npm ci for faster and consistent installs
+          npm run prepare # Run any pre-build scripts if needed
 
-      - name: Build Vue.js Project
+      - name: Build
         run: npm run build
 
-      - name: Upload to S3
-        uses: jakejarvis/s3-sync-action@master
+      - name: Deploy to OBS Huawei Cloud
+        uses: appleboy/ssh-action@v0.1.9
         with:
-          #args: --acl public-read --delete --exclude 'node_modules/*' --include 'dist/' s3://${{ env.AWS_S3_BUCKET }}/
-          args: --follow-symlinks --delete  
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'ap-south-1'
-          SOURCE_DIR: 'dist'
+          username: ${{ secrets.OBS_ACCESS_KEY }}
+          host: obs.huaweicloud.com # Assuming OBS Huawei Cloud host
+          key: ${{ secrets.OBS_SECRET_KEY }}
+          region: 'ME-Riyadh'
+          script: |
+            scp -r $GITHUB_WORKSPACE/dist/* ${{ secrets.OBS_BUCKET }}
