@@ -1,4 +1,4 @@
-name: Deploy to OBS
+name: Build and Deploy to OBS
 
 on:
   push:
@@ -16,31 +16,23 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14' # Use Node.js version 14
+          node-version: 14
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install huaweicloud-obs-sync
+        run: npm install huaweicloud-obs-sync@latest --save
 
       - name: Build Vue.js Project
         run: npm run build
 
-      - name: Download and Install obsutil
-        run: |
-          wget https://obs-community-intl.obs.ap-southeast-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
-          tar -xzvf obsutil_linux_amd64.tar.gz
-          chmod 755 $(ls -d obsutil_linux_amd64*/ | head -n 1)/obsutil
-          cd $(ls -d obsutil_linux_amd64*/ | head -n 1)
-          ./obsutil version
-
-      - name: Configure obsutil
-        run: |
-          $(ls -d obsutil_linux_amd64*/ | head -n 1)/obsutil config -i <<EOF
-          en
-          ${{ secrets.OBS_ACCESS_KEY }}
-          ${{ secrets.OBS_SECRET_KEY }}
-          ${{ secrets.OBS_ENDPOINT }}
-          EOF
-
       - name: Upload to OBS
         run: |
-          $(ls -d obsutil_linux_amd64*/ | head -n 1)/obsutil cp -r ../dist/* obs://${{ secrets.OBS_BUCKET }}
+          var obsSync = require('huaweicloud-obs-sync');
+          obsSync.syncFolderToOBS({
+            server: '${{ secrets.OBS_ENDPOINT }}',
+            bucket: '${{ secrets.OBS_BUCKET }}',
+            accessKeyId: '${{ secrets.OBS_ACCESS_KEY }}',
+            secretAccessKey: '${{ secrets.OBS_SECRET_KEY }}',
+            localDir: './dist',
+            remoteDir: '/',
+            syncDeletedFiles: 'yes'
+          });
