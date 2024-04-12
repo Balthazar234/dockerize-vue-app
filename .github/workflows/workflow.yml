@@ -3,7 +3,7 @@ name: Deploy To OBS
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   build_and_deploy:
