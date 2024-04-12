@@ -28,14 +28,12 @@ jobs:
         run: |
           wget https://obs-community-intl.obs.ap-southeast-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
           tar -xzvf obsutil_linux_amd64.tar.gz
-          cd obsutil
-          chmod 755 obsutil
-          ./obsutil version
+          chmod 755 obsutil/obsutil
+          obsutil/obsutil version
 
       - name: Upload to OBS
         run: |
-          cd obsutil
-          ./obsutil cp -r ../dist/* obs://${{ secrets.OBS_BUCKET }}
+          obsutil/obsutil cp -r dist/* obs://${{ secrets.OBS_BUCKET }}
         env:
           OBS_ACCESS_KEY: ${{ secrets.OBS_ACCESS_KEY }}
           OBS_SECRET_KEY: ${{ secrets.OBS_SECRET_KEY }}
