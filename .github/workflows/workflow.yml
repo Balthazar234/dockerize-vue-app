@@ -39,6 +39,9 @@ jobs:
           echo "ak=${{ secrets.OBS_ACCESS_KEY }}" >> ~/.obsutilconfig
           echo "sk=${{ secrets.OBS_SECRET_KEY }}" >> ~/.obsutilconfig
           echo "endpoint=${{ secrets.OBS_ENDPOINT }}" >> ~/.obsutilconfig
+
+      - name: Debug obsutilconfig file
+        run: cat ~/.obsutilconfig
         
       - name: Upload to OBS
         run: |
