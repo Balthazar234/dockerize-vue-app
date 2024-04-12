@@ -24,12 +24,19 @@ jobs:
       - name: Build Vue.js Project
         run: npm run build
 
-      - name: Deploy to OBS Huawei Cloud
-        uses: appleboy/ssh-action@v0.1.9
-        with:
-          username: ${{ secrets.OBS_ACCESS_KEY }}
-          host: obs.me-east-1.myhuaweicloud.com 
-          key: ${{ secrets.OBS_SECRET_KEY }}
-          region: 'ME-Riyadh'
-          script: |
-            scp -r $GITHUB_WORKSPACE/dist/* ${{ secrets.OBS_BUCKET }}
+      - name: Download and Install obsutil
+        run: |
+          wget https://obs-community-intl.obs.ap-southeast-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz
+          tar -xzvf obsutil_linux_amd64.tar.gz
+          cd obsutil
+          chmod 755 obsutil
+          ./obsutil version
+
+      - name: Upload to OBS
+        run: |
+          cd obsutil
+          ./obsutil cp -r ../dist/* obs://${{ secrets.OBS_BUCKET }}
+        env:
+          OBS_ACCESS_KEY: ${{ secrets.OBS_ACCESS_KEY }}
+          OBS_SECRET_KEY: ${{ secrets.OBS_SECRET_KEY }}
+          OBS_ENDPOINT: ${{ secrets.OBS_ENDPOINT }}
