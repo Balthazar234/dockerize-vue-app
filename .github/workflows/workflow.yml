@@ -1,4 +1,4 @@
-name: Deploy To OBS
+name: Deploy to OBS
 
 on:
   push:
@@ -18,12 +18,10 @@ jobs:
         with:
           node-version: '14' # Use Node.js version 14
 
-      - name: Install dependencies
-        run: |
-          npm ci --prefer-offline --no-audit # Use npm ci for faster and consistent installs
-          npm run prepare # Run any pre-build scripts if needed
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Build
+      - name: Build Vue.js Project
         run: npm run build
 
       - name: Deploy to OBS Huawei Cloud
