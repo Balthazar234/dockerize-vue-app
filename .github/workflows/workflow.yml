@@ -28,7 +28,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.9
         with:
           username: ${{ secrets.OBS_ACCESS_KEY }}
-          host: obs.huaweicloud.com # Assuming OBS Huawei Cloud host
+          host: obs.me-east-1.myhuaweicloud.com 
           key: ${{ secrets.OBS_SECRET_KEY }}
           region: 'ME-Riyadh'
           script: |
