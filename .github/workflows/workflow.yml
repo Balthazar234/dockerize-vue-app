@@ -32,10 +32,14 @@ jobs:
           cd $(ls -d obsutil_linux_amd64*/ | head -n 1)
           ./obsutil version
 
+      - name: Configure obsutil
+        run: |
+          echo '[Credential]' > ~/.obsutilconfig
+          echo "language=en" >> ~/.obsutilconfig
+          echo "ak=${{ secrets.OBS_ACCESS_KEY }}" >> ~/.obsutilconfig
+          echo "sk=${{ secrets.OBS_SECRET_KEY }}" >> ~/.obsutilconfig
+          echo "endpoint=${{ secrets.OBS_ENDPOINT }}" >> ~/.obsutilconfig
+
       - name: Upload to OBS
         run: |
           $(ls -d obsutil_linux_amd64*/ | head -n 1)/obsutil cp -r ../dist/* obs://${{ secrets.OBS_BUCKET }}
-        env:
-          OBS_ACCESS_KEY: ${{ secrets.OBS_ACCESS_KEY }}
-          OBS_SECRET_KEY: ${{ secrets.OBS_SECRET_KEY }}
-          OBS_ENDPOINT: ${{ secrets.OBS_ENDPOINT }}
