@@ -28,8 +28,8 @@ jobs:
         run: |
           npm install huaweicloud-obs-sync
           node -e "require('huaweicloud-obs-sync').syncFolderToOBS({
-            server: 'https://obs.me-east-1.myhuaweicloud.com',
-            bucket: 'ewanc-frontend2',
+            server: '${{ secrets.OBS_ENDPOINT }}',
+            bucket: '${{ secrets.OBS_BUCKET }}',
             accessKeyId: '${{ secrets.OBS_ACCESS_KEY }}',
             secretAccessKey: '${{ secrets.OBS_SECRET_KEY }}',
             localDir: 'dist'
