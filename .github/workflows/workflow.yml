@@ -1,4 +1,4 @@
-name: Build and Deploy to OBS
+name: Build and Deploy To OBS
 
 on:
   push:
